@@ -130,7 +130,6 @@ One rule shaped the design: all the math lives in the rules engine, and the LLM 
 |---|---|---|
 | Framework | Next.js 15 (App Router, TypeScript) | Dashboard, Server Actions, API routes |
 | UI | Tailwind CSS, shadcn/ui, Framer Motion | High-contrast clinical UI, transitions, alert pulses |
-| Icons | Lucide | Icons |
 | Charts | Tremor, Chart.js | Metric cards, discharge timelines, load curves |
 | Simulation | Zustand | Tick-based store for power drain and thermal decay |
 | AI | Vercel AI SDK, Gemini 2.5 Flash | Streams the emergency protocol during a blackout |
@@ -140,63 +139,6 @@ One rule shaped the design: all the math lives in the rules engine, and the LLM 
 | Validation | Zod | Checks weather payloads and simulation inputs |
 | Weather | Open-Meteo REST API | Live ambient temperature by clinic coordinates, no API key |
 | Hosting | Vercel + GitHub | Free tier, auto-deploys on every push |
-
----
-
-## Run it yourself
-
-```bash
-git clone https://github.com/<your-username>/surge.git
-cd surge
-npm install
-```
-
-Create `.env.local` in the project root:
-
-```bash
-# Gemini
-GEMINI_API_KEY=your_key_here
-
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-```
-
-Open-Meteo doesn't need a key. Then:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-Keep `GEMINI_API_KEY` and `CLERK_SECRET_KEY` server-side. Don't prefix them with `NEXT_PUBLIC_`.
-
-### Deploying
-
-It runs on Vercel's free tier.
-
-1. Push the repo to GitHub.
-2. Import it at [vercel.com/new](https://vercel.com/new).
-3. Add the variables from `.env.local` under *Project Settings → Environment Variables*.
-4. Deploy.
-
-After that, every push to `main` goes to production and every PR gets its own preview URL.
-
-### Installing it as an app
-
-Open the deployed site in Chrome, Edge or Safari and choose *Install app* or *Add to Home Screen*. New deploys show up on the next load.
-
----
-
-## Contributing
-
-PRs and issues are welcome. Things we'd love help with:
-
-- Real PHC load profiles and battery specs to replace our demo defaults
-- Heat-stability data for specific vaccines, since they tolerate heat very differently
-- Regional-language output for the ColdGuard protocol
-- Tests for the rules engine
 
 ---
 
