@@ -19,6 +19,8 @@
 
 ---
 
+SURGE is a hackathon project. It's a PWA, so it installs from the browser and still opens when the wifi is down.
+
 ## Why we built this
 
 Picture a rural health centre at night. The grid just went down, which happens most days. There's a battery, and a lot hangs on it: the oxygen and ICU equipment, the vaccine fridge, the lights, the phone or radio you'd use to call for help.
@@ -55,9 +57,17 @@ Every batch in the clinic's stock gets tracked: its storage temperature and how 
 
 The printed expiry date assumes the vial stayed cold. After a blackout it didn't, so SURGE adds up the actual heat exposure per batch and shortens its effective shelf life. Stock is then sorted First-Expired, First-Out using that adjusted date. The batch that got the most heat gets used first, before it quietly stops working.
 
-Everything is saved in the browser (`localStorage`). There's no backend database, which keeps it usable on a bad connection.
+Everything is saved in the browser (`localStorage`). There's no backend database, so the data is already on the device when the connection drops.
 
-SURGE is also a PWA, so you can install it from the browser on any phone, tablet or PC. No app store and no `.exe`. The app shell and simulation are cached so the dashboard and rules-based alerts still load when the power and the internet go out together.
+### Opens with no wifi
+
+A power cut usually takes the router with it, so an app that needs the internet fails exactly when it's needed. SURGE is a PWA built for that. Install it once from the browser on any phone, tablet or PC (no app store, no `.exe`) and open it once while online so it can cache itself. After that it opens without wifi or mobile data. The app shell, the simulation, the rules engine and your saved clinic data all run on the device, so the dashboard and the rules-based alerts keep working through a blackout.
+
+The one thing that needs a connection is ColdGuard's Gemini call. Offline, you still get the rules-based alerts and numbers. The written step-by-step protocol returns when the connection does.
+
+### A login for every hospital
+
+Each hospital gets its own username and password. A PHC and a district hospital sign in separately and see only their own load profile, battery settings and vaccine stock, so one facility's data never shows up in another's dashboard. Accounts are handled by Clerk. Sign in once while online; after that the saved data for your hospital is on the device.
 
 ### ColdGuard, the AI triage helper
 
@@ -76,7 +86,8 @@ The rules engine does the math. Gemini only does the wording. It never gets to m
 5. When the battery or fridge temperature crosses a risk level, the rules engine raises an alert.
 6. ColdGuard sends that state to Gemini, and the action steps stream into the panel.
 7. Shed a load, or don't, and watch the curves change.
-8. Restore power and open the inventory. Batches now show heat-adjusted expiry dates, reordered by FEFO.
+8. Switch the device to airplane mode and reload. The installed app still opens, and the simulation and alerts keep running.
+9. Restore power and open the inventory. Batches now show heat-adjusted expiry dates, reordered by FEFO.
 
 ---
 
@@ -115,8 +126,9 @@ The rules engine does the math. Gemini only does the wording. It never gets to m
           │  clinic profiles, batch logs
           ▼
 ┌────────────────────┐
-│    localStorage    │   Zustand persist. Clerk orgs pick the
-│  (per browser)     │   clinic; data never leaves the device
+│    localStorage    │   Zustand persist, keyed per hospital.
+│  (per browser)     │   Clerk login picks the hospital; data
+│                    │   never leaves the device
 └────────────────────┘
 ```
 
@@ -130,12 +142,13 @@ One rule shaped the design: all the math lives in the rules engine, and the LLM 
 |---|---|---|
 | Framework | Next.js 15 (App Router, TypeScript) | Dashboard, Server Actions, API routes |
 | UI | Tailwind CSS, shadcn/ui, Framer Motion | High-contrast clinical UI, transitions, alert pulses |
+| Icons | Lucide | Icons |
 | Charts | Tremor, Chart.js | Metric cards, discharge timelines, load curves |
 | Simulation | Zustand | Tick-based store for power drain and thermal decay |
 | AI | Vercel AI SDK, Gemini 2.5 Flash | Streams the emergency protocol during a blackout |
 | Storage | `localStorage` via Zustand `persist` | Clinic profiles and batch logs, no backend database |
 | PWA | Web app manifest, service worker (`@serwist/next`) | Install to home screen, offline app shell |
-| Auth | Clerk | Organization switching (`PHC Hoskote` vs. `District Hospital`) |
+| Auth | Clerk | Username and password sign-in per hospital (`PHC Hoskote`, `District Hospital`), with each hospital's data kept separate |
 | Validation | Zod | Checks weather payloads and simulation inputs |
 | Weather | Open-Meteo REST API | Live ambient temperature by clinic coordinates, no API key |
 | Hosting | Vercel + GitHub | Free tier, auto-deploys on every push |
@@ -149,7 +162,5 @@ MIT. See [LICENSE](LICENSE).
 ---
 
 <div align="center">
-
-Built at a hackathon, for the people who keep the cold chain running.
 
 </div>
