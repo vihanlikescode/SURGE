@@ -2,7 +2,7 @@
 
 # SURGE
 
-### When energy becomes a clinical decision.
+### Power and temperature management for healthcare facilities.
 
 ![SDG 7](https://img.shields.io/badge/SDG%207-Affordable%20%26%20Clean%20Energy-FCC30B?style=for-the-badge)
 ![SDG 3](https://img.shields.io/badge/SDG%203-Good%20Health%20%26%20Well--being-4C9F38?style=for-the-badge)
@@ -11,7 +11,6 @@
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini_2.5_Flash-8E75B2?style=flat-square&logo=googlegemini&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-Installable%20%26%20Offline-5A0FC8?style=flat-square&logo=pwa&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
@@ -19,148 +18,85 @@
 
 ---
 
-SURGE is a hackathon project. It's a PWA, so it installs from the browser and still opens when the wifi is down.
+SURGE is a progressive web app focused on two needs in healthcare facilities: managing hospital power and monitoring temperatures in clinic storage. Its simulation and saved data work offline after the app has been opened online once.
 
-## Why we built this
+## Why SURGE
 
-Picture a rural health centre at night. The grid just went down, which happens most days. There's a battery, and a lot hangs on it: the oxygen and ICU equipment, the vaccine fridge, the lights, the phone or radio you'd use to call for help.
+Hospitals rely on electricity for critical equipment, while clinics rely on stable temperatures to protect medicines and vaccines. During a power outage or a cooling problem, staff need a clear view of remaining power, critical loads, and storage conditions.
 
-The battery won't carry all of that for long, and the nurse on shift has to decide where the power goes. Nobody trained them for it, and no tool says how many hours they actually have. They guess.
-
-The numbers behind this are bad:
-
-- Over **$35B** of vaccines and biologics are ruined every year by cold-chain failures.
-- India has **27,000+ Primary Health Centres**. In rural ones, daily outages hit up to **70% of vaccine fridges**.
-
-We think of electricity at a PHC as a medical supply. It runs out, someone has to ration it, and how they ration it affects patients. SURGE puts numbers behind that decision.
-
----
+SURGE puts those two operational views in one place.
 
 ## What it does
 
-### Power management for the ICU and everything else that matters
+### Hospital power management
 
-SURGE simulates a rural clinic on solar, battery and grid. Hit the blackout button and watch the battery drain across four loads:
+SURGE simulates a facility powered by solar, batteries, and the grid. During an outage, it shows battery use across four critical loads:
 
-| Load | Why it's on the list |
+| Load | Purpose |
 |---|---|
-| Oxygen / ICU | Patients on support can't wait |
-| Refrigeration | Vaccines spoil outside their temperature range |
-| Emergency lighting | Night deliveries and procedures |
-| Comms | The only way to call for backup or transport |
+| Oxygen and ICU equipment | Supports patients who need respiratory or intensive care |
+| Medicine and vaccine refrigeration | Keeps clinical storage within its required temperature range |
+| Emergency lighting | Supports care during a power interruption |
+| Communications | Helps staff contact support or arrange transport |
 
-We deliberately don't rank these. All four are critical, and which one gives way depends on the night. SURGE shows each load's discharge curve, how many hours you have at the current split, and what you buy or lose by cutting one load to save another. The call stays with the person in the room.
+The dashboard shows each load's discharge curve and estimated remaining runtime at the current allocation. Staff can adjust loads and see how those changes affect available power.
 
-### Medicine and vaccine storage
+### Clinic and storage temperature management
 
-Every batch in the clinic's stock gets tracked: its storage temperature and how long it has spent outside the safe range.
+SURGE models temperature conditions in the clinic and its medicine and vaccine storage. It tracks storage temperature and how long each batch has spent outside its safe range. Temperature alerts help staff identify storage excursions and respond to them.
 
-The printed expiry date assumes the vial stayed cold. After a blackout it didn't, so SURGE adds up the actual heat exposure per batch and shortens its effective shelf life. Stock is then sorted First-Expired, First-Out using that adjusted date. The batch that got the most heat gets used first, before it quietly stops working.
+The demo simulates storage temperature and uses local ambient temperature data when available. The dashboard and saved clinic data remain available offline.
 
-Everything is saved in the browser (`localStorage`). There's no backend database, so the data is already on the device when the connection drops.
+## Demo walkthrough
 
-### Opens with no wifi
-
-A power cut usually takes the router with it, so an app that needs the internet fails exactly when it's needed. SURGE is a PWA built for that. Install it once from the browser on any phone, tablet or PC (no app store, no `.exe`) and open it once while online so it can cache itself. After that it opens without wifi or mobile data. The app shell, the simulation, the rules engine and your saved clinic data all run on the device, so the dashboard and the rules-based alerts keep working through a blackout.
-
-The one thing that needs a connection is ColdGuard's Gemini call. Offline, you still get the rules-based alerts and numbers. The written step-by-step protocol returns when the connection does.
-
-### A login for every hospital
-
-Each hospital gets its own username and password. A PHC and a district hospital sign in separately and see only their own load profile, battery settings and vaccine stock, so one facility's data never shows up in another's dashboard. Accounts are handled by Clerk. Sign in once while online; after that the saved data for your hospital is on the device.
-
-### ColdGuard, the AI triage helper
-
-Raw numbers like "battery 31%, fridge 7.8°C and climbing, no solar" don't help much at 2 a.m. ColdGuard takes the numbers, runs them through a TypeScript rules engine, and passes the result to Gemini 2.5 Flash. Gemini writes a short, plain-language set of steps: how to split the remaining power across the four loads, which stock to move, who to call.
-
-The rules engine does the math. Gemini only does the wording. It never gets to make up a number.
-
----
-
-## Walking through the demo
-
-1. Open the dashboard. Solar is charging the battery, the grid is on, all four loads are green.
-2. Look at the baseline: battery level, fridge temperature, and stock with its printed expiry dates.
-3. Trigger a blackout. The grid drops. At night or under cloud, solar drops too.
-4. Watch the discharge curves for ICU/oxygen, refrigeration, lighting and comms.
-5. When the battery or fridge temperature crosses a risk level, the rules engine raises an alert.
-6. ColdGuard sends that state to Gemini, and the action steps stream into the panel.
-7. Shed a load, or don't, and watch the curves change.
-8. Switch the device to airplane mode and reload. The installed app still opens, and the simulation and alerts keep running.
-9. Restore power and open the inventory. Batches now show heat-adjusted expiry dates, reordered by FEFO.
-
----
+1. Open the dashboard and review the facility's power and storage temperature status.
+2. Trigger a grid outage and observe battery use across the four loads.
+3. Adjust a load allocation and compare the estimated remaining runtime.
+4. Watch the storage temperature model and alerts as conditions change.
+5. Switch to airplane mode and reload the installed app to see the simulation and saved data continue offline.
 
 ## How it fits together
 
 ```
 ┌────────────────────┐
-│  Telemetry / Input │   Zustand tick simulation: solar, battery,
-│  (Digital Twin)    │   grid, 4 loads, fridge temp, batches.
-│                    │   + Open-Meteo ambient temp (Zod-validated)
+│ Simulation / Input │   Solar, battery, grid, facility loads,
+│                    │   storage temperature and ambient weather.
 └─────────┬──────────┘
-          │  state snapshots
+          │ state snapshots
           ▼
 ┌────────────────────┐
-│   Rules Engine     │   TypeScript. Deterministic.
-│   (TypeScript)     │   - battery runtime per load
-│                    │   - risk thresholds / alert level
-│                    │   - cumulative heat exposure per batch
-│                    │   - heat-adjusted FEFO ranking
+│ Rules Engine       │   Runtime estimates and temperature alerts.
+│ (TypeScript)       │
 └─────────┬──────────┘
-          │  structured, validated context
+          │ validated facility status
           ▼
 ┌────────────────────┐
-│  Gemini 2.5 Flash  │   Server-side API route.
-│  (ColdGuard AI)    │   Turns the context into step-by-step
-│                    │   clinical actions, streamed via the
-│                    │   Vercel AI SDK
+│ Next.js Dashboard  │   Power management and storage temperature.
 └─────────┬──────────┘
-          │  streamed protocol text
+          │ saved facility data
           ▼
 ┌────────────────────┐
-│    Next.js UI      │   Tailwind + shadcn/ui + Framer Motion.
-│  Dashboard / Triage│   Tremor + Chart.js for live curves,
-│  / Inventory       │   FEFO inventory view
-└─────────┬──────────┘
-          │  clinic profiles, batch logs
-          ▼
-┌────────────────────┐
-│    localStorage    │   Zustand persist, keyed per hospital.
-│  (per browser)     │   Clerk login picks the hospital; data
-│                    │   never leaves the device
+│ localStorage       │   Data stored in the browser for offline use.
 └────────────────────┘
 ```
-
-One rule shaped the design: all the math lives in the rules engine, and the LLM only explains it. If Gemini is slow or down, the dashboard and the rules-based alerts still work.
-
----
 
 ## Tech stack
 
 | Layer | What we used | What it does here |
 |---|---|---|
-| Framework | Next.js 15 (App Router, TypeScript) | Dashboard, Server Actions, API routes |
-| UI | Tailwind CSS, shadcn/ui, Framer Motion | High-contrast clinical UI, transitions, alert pulses |
-| Icons | Lucide | Icons |
-| Charts | Tremor, Chart.js | Metric cards, discharge timelines, load curves |
-| Simulation | Zustand | Tick-based store for power drain and thermal decay |
-| AI | Vercel AI SDK, Gemini 2.5 Flash | Streams the emergency protocol during a blackout |
-| Storage | `localStorage` via Zustand `persist` | Clinic profiles and batch logs, no backend database |
-| PWA | Web app manifest, service worker (`@serwist/next`) | Install to home screen, offline app shell |
-| Auth | Clerk | Username and password sign-in per hospital (`PHC Hoskote`, `District Hospital`), with each hospital's data kept separate |
-| Validation | Zod | Checks weather payloads and simulation inputs |
-| Weather | Open-Meteo REST API | Live ambient temperature by clinic coordinates, no API key |
-| Hosting | Vercel + GitHub | Free tier, auto-deploys on every push |
+| Framework | Next.js 15 (App Router, TypeScript) | Dashboard and API routes |
+| UI | Tailwind CSS, shadcn/ui, Framer Motion | Facility dashboard and interactions |
+| Icons | Lucide | Interface icons |
+| Charts | Tremor, Chart.js | Power and temperature trends |
+| Simulation | Zustand | Power use and storage temperature simulation |
+| Storage | `localStorage` via Zustand `persist` | Saved facility settings and storage records |
+| PWA | Web app manifest, service worker (`@serwist/next`) | Installable app shell with offline support |
+| Validation | Zod | Validates weather data and simulation inputs |
+| Weather | Open-Meteo REST API | Ambient temperature by facility coordinates; no API key |
+| Hosting | Vercel + GitHub | Hosting and deployment |
 
 ---
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
----
-
-<div align="center">
-
-</div>
