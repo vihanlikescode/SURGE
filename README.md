@@ -1,101 +1,50 @@
-<div align="center">
-
 # SURGE
 
-### Power and temperature management for healthcare facilities.
+### Keeping care running when power or cooling falters.
 
-![SDG 7](https://img.shields.io/badge/SDG%207-Affordable%20%26%20Clean%20Energy-FCC30B?style=for-the-badge)
-![SDG 3](https://img.shields.io/badge/SDG%203-Good%20Health%20%26%20Well--being-4C9F38?style=for-the-badge)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+**A hackathon prototype for hospital power management and clinic storage temperatures.**
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![PWA](https://img.shields.io/badge/PWA-Installable%20%26%20Offline-5A0FC8?style=flat-square&logo=pwa&logoColor=white)
-![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+A blackout can quickly turn into hard choices: which equipment can keep running, how long the battery will last, and whether medicines stay within their safe temperature range. SURGE brings those two challenges into one simple, offline-ready dashboard.
 
-</div>
+## What SURGE does
 
----
+### Helps teams see their power options
 
-SURGE is a progressive web app focused on two needs in healthcare facilities: managing hospital power and monitoring temperatures in clinic storage. Its simulation and saved data work offline after the app has been opened online once.
+SURGE simulates a hospital running on solar, batteries, and the grid. When the grid goes down, the dashboard shows how power is being used by:
 
-## Why SURGE
+- Oxygen and ICU equipment
+- Medicine and vaccine refrigeration
+- Emergency lighting
+- Communications
 
-Hospitals rely on electricity for critical equipment, while clinics rely on stable temperatures to protect medicines and vaccines. During a power outage or a cooling problem, staff need a clear view of remaining power, critical loads, and storage conditions.
+See each load's discharge curve, estimate how long the battery may last, and try different load allocations to understand the trade-offs. The dashboard helps make the situation clearer; the decision stays with the people caring for patients.
 
-SURGE puts those two operational views in one place.
+### Helps clinics keep an eye on storage temperatures
 
-## What it does
+SURGE models clinic conditions and medicine and vaccine storage temperatures. It tracks how long each batch spends outside its safe temperature range, so staff can spot a storage excursion and decide what to do next.
 
-### Hospital power management
+## Try the demo
 
-SURGE simulates a facility powered by solar, batteries, and the grid. During an outage, it shows battery use across four critical loads:
+1. Open the dashboard and check the power and storage temperature status.
+2. Trigger a grid outage and watch the battery drain across the four loads.
+3. Adjust a load and see how the estimated battery runtime changes.
+4. Follow the storage temperature and batch exposure as conditions change.
+5. Go offline and reload the installed app to see the simulation and saved data continue to work.
 
-| Load | Purpose |
-|---|---|
-| Oxygen and ICU equipment | Supports patients who need respiratory or intensive care |
-| Medicine and vaccine refrigeration | Keeps clinical storage within its required temperature range |
-| Emergency lighting | Supports care during a power interruption |
-| Communications | Helps staff contact support or arrange transport |
+## Built for unreliable connectivity
 
-The dashboard shows each load's discharge curve and estimated remaining runtime at the current allocation. Staff can adjust loads and see how those changes affect available power.
+SURGE is an installable progressive web app. Open it once while online to cache the app; after that, the dashboard, simulation, alerts, and saved clinic data are available without a connection.
 
-### Clinic and storage temperature management
+## How it works
 
-SURGE models temperature conditions in the clinic and its medicine and vaccine storage. It tracks storage temperature and how long each batch has spent outside its safe range. Temperature alerts help staff identify storage excursions and respond to them.
+- A local simulation models solar, grid, batteries, facility loads, and storage temperatures.
+- A TypeScript rules engine calculates battery runtime and raises temperature alerts.
+- The dashboard saves facility data in the browser with `localStorage`.
+- Open-Meteo ambient temperature data can inform the storage simulation when a connection is available.
 
-The demo simulates storage temperature and uses local ambient temperature data when available. The dashboard and saved clinic data remain available offline.
+## Built with
 
-## Demo walkthrough
-
-1. Open the dashboard and review the facility's power and storage temperature status.
-2. Trigger a grid outage and observe battery use across the four loads.
-3. Adjust a load allocation and compare the estimated remaining runtime.
-4. Watch the storage temperature model and alerts as conditions change.
-5. Switch to airplane mode and reload the installed app to see the simulation and saved data continue offline.
-
-## How it fits together
-
-```
-┌────────────────────┐
-│ Simulation / Input │   Solar, battery, grid, facility loads,
-│                    │   storage temperature and ambient weather.
-└─────────┬──────────┘
-          │ state snapshots
-          ▼
-┌────────────────────┐
-│ Rules Engine       │   Runtime estimates and temperature alerts.
-│ (TypeScript)       │
-└─────────┬──────────┘
-          │ validated facility status
-          ▼
-┌────────────────────┐
-│ Next.js Dashboard  │   Power management and storage temperature.
-└─────────┬──────────┘
-          │ saved facility data
-          ▼
-┌────────────────────┐
-│ localStorage       │   Data stored in the browser for offline use.
-└────────────────────┘
-```
-
-## Tech stack
-
-| Layer | What we used | What it does here |
-|---|---|---|
-| Framework | Next.js 15 (App Router, TypeScript) | Dashboard and API routes |
-| UI | Tailwind CSS, shadcn/ui, Framer Motion | Facility dashboard and interactions |
-| Icons | Lucide | Interface icons |
-| Charts | Tremor, Chart.js | Power and temperature trends |
-| Simulation | Zustand | Power use and storage temperature simulation |
-| Storage | `localStorage` via Zustand `persist` | Saved facility settings and storage records |
-| PWA | Web app manifest, service worker (`@serwist/next`) | Installable app shell with offline support |
-| Validation | Zod | Validates weather data and simulation inputs |
-| Weather | Open-Meteo REST API | Ambient temperature by facility coordinates; no API key |
-| Hosting | Vercel + GitHub | Hosting and deployment |
-
----
+Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Zustand, Tremor, Chart.js, Zod, and `@serwist/next`.
 
 ## License
 
