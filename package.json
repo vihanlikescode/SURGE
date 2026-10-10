@@ -1,0 +1,12 @@
+{
+  "name": "surge-outage-planner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Power-outage planner for hospitals and clinics: backup runtime, what to keep on, and medicine priority. No dependencies.",
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}

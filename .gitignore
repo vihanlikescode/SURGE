@@ -1,0 +1,13 @@
+# Your personal settings and API key (copy config.example.js to config.js)
+config.js
+
+# Dependencies and build output
+node_modules/
+.vercel/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

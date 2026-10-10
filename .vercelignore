@@ -1,0 +1,6 @@
+# Vercel uses this file instead of .gitignore when you deploy from this folder with the CLI,
+# so config.js (with your free weather key) is uploaded and the deployed site can show the power-cut chance.
+node_modules/
+tests/
+.DS_Store
+Thumbs.db
