@@ -1,4 +1,4 @@
-# SURGE
+# SURGE - Smart Utility Resource Grid for Emergency healthcare
 
 ### Keeping care running when power or cooling falters.
 
