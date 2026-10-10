@@ -2,5 +2,6 @@
 # so config.js (with your free weather key) is uploaded and the deployed site can show the power-cut chance.
 node_modules/
 tests/
+publish.ps1
 .DS_Store
 Thumbs.db

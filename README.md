@@ -79,6 +79,10 @@ With Node.js 18 or newer, run the project tests with:
 node --test
 ```
 
+## Publish
+
+On the `publish-surge-vercel-2026-10-10` branch, commit your changes and run `powershell -NoProfile -ExecutionPolicy Bypass -File .\publish.ps1` from the Vercel-linked checkout. This pushes the branch and publishes it to production.
+
 ## Safety and limits
 
 SURGE is a planning prototype, not a medical device, electrical controller, or validated engineering tool. Its output depends on user-entered values and model assumptions. Medicine estimates do not determine whether a medicine is safe to use; follow manufacturer guidance and local clinical procedures. Qualified staff must review any equipment shutdown plan, and life-support equipment must not be switched off based on this app. The local sign-in screen does not protect data on a shared device.
