@@ -14,8 +14,8 @@ This folder contains a plain HTML, CSS, and JavaScript app. It does not use Next
 - **Local saving and offline use:** Facility plans are saved in the browser on that device. The installable progressive web app caches its files when served from localhost or HTTPS; the optional weather lookup requires internet access.
 
 ## Run SURGE
-
-### Open the page directly
+ You can directly access it at https://surge-ten-xi.vercel.app/
+### OR Open the page directly
 
 Double-click `index.html`. This works without installing Node.js. Browser restrictions mean the service worker and app installation are unavailable when opened this way.
 
