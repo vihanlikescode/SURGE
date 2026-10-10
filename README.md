@@ -37,7 +37,7 @@ SURGE is an installable progressive web app. Open it once while online to cache 
 
 ## How it works
 
-- A local simulation models solar, grid, batteries, facility loads, and storage temperatures.
+- A local simulation models grid, batteries, facility loads, and storage temperatures.
 - A TypeScript rules engine calculates battery runtime and raises temperature alerts.
 - The dashboard saves facility data in the browser with `localStorage`.
 - Open-Meteo ambient temperature data can inform the storage simulation when a connection is available.
